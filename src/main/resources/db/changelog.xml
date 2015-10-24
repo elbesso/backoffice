@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
-        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <changeSet id="1" author="raguzin">
         <createTable tableName="test">
@@ -18,6 +16,26 @@
         <addColumn tableName="test">
             <column name="set_2" type="varchar(255)"/>
         </addColumn>
+    </changeSet>
+
+    <changeSet id="3" author="raguzin">
+        <dropTable tableName="test"/>
+        <createTable tableName="invite">
+            <column name="id" type="integer">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="invite" type="varchar(19)"/>
+            <column name="product_id" type="integer"/>
+            <column name="date_created" type="date"/>
+            <column name="date_expire" type="date"/>
+            <column name="date_activated" type="date"/>
+            <column name="user_id" type="integer"/>
+            <column name="comment" type="varchar(1024)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="4" author="raguzin">
+        <addAutoIncrement tableName="invite" columnName="id" columnDataType="integer" incrementBy="1" startWith="1"/>
     </changeSet>
 
 </databaseChangeLog>
