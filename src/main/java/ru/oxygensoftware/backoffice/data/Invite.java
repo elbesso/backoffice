@@ -1,9 +1,6 @@
 package ru.oxygensoftware.backoffice.data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -15,8 +12,9 @@ public class Invite {
     @Column(name = "invite")
     private String invite;
 
-    @Column(name = "product_id")
-    private Integer productId;
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
 
     @Column(name = "date_created")
     private Date dateCreated;
@@ -27,8 +25,9 @@ public class Invite {
     @Column(name = "date_activated")
     private Date dateActivated;
 
-    @Column(name = "user_id")
-    private Integer userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "comment")
     private String comment;
@@ -73,12 +72,12 @@ public class Invite {
         this.dateActivated = dateActivated;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getComment() {
@@ -89,11 +88,11 @@ public class Invite {
         this.comment = comment;
     }
 
-    public Integer getProductId() {
-        return productId;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setProductId(Integer productId) {
-        this.productId = productId;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 }

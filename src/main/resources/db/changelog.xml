@@ -38,4 +38,51 @@
         <addAutoIncrement tableName="invite" columnName="id" columnDataType="integer" incrementBy="1" startWith="1"/>
     </changeSet>
 
+    <changeSet id="5" author="raguzin">
+        <createTable tableName="product">
+            <column name="id" autoIncrement="true" type="integer">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar(255)"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="invite" baseColumnNames="product_id"
+                                 constraintName="fk_invite_to_product" referencedTableName="product"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="6" author="raguzin">
+        <createTable tableName="user">
+            <column name="id" autoIncrement="true" type="integer">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="varchar(255)"/>
+            <column name="surname" type="varchar(255)"/>
+            <column name="organization" type="varchar(255)"/>
+            <column name="position" type="varchar(255)"/>
+            <column name="email" type="varchar(255)"/>
+            <column name="country" type="varchar(255)"/>
+            <column name="state" type="varchar(255)"/>
+            <column name="city" type="varchar(255)"/>
+            <column name="postcode" type="varchar(255)"/>
+            <column name="address" type="varchar(1024)"/>
+            <column name="phone_number" type="varchar(255)"/>
+        </createTable>
+        <delete tableName="invite"/>
+        <addForeignKeyConstraint baseTableName="invite" baseColumnNames="user_id" constraintName="fk_invite_to_user"
+                                 referencedTableName="user"
+                                 referencedColumnNames="id"/>
+        <addUniqueConstraint tableName="invite" columnNames="invite"/>
+        <addNotNullConstraint tableName="invite" columnName="product_id" columnDataType="integer"/>
+        <addNotNullConstraint tableName="invite" columnName="date_created" columnDataType="date"/>
+        <addNotNullConstraint tableName="product" columnName="name" columnDataType="varchar(255)"/>
+        <addNotNullConstraint tableName="user" columnName="name" columnDataType="varchar(255)"/>
+        <addNotNullConstraint tableName="user" columnName="surname" columnDataType="varchar(255)"/>
+        <addNotNullConstraint tableName="user" columnName="email" columnDataType="varchar(255)"/>
+        <addNotNullConstraint tableName="user" columnName="country" columnDataType="varchar(255)"/>
+        <addNotNullConstraint tableName="user" columnName="city" columnDataType="varchar(255)"/>
+        <addNotNullConstraint tableName="user" columnName="postcode" columnDataType="varchar(255)"/>
+        <addNotNullConstraint tableName="user" columnName="address" columnDataType="varchar(1024)"/>
+        <addNotNullConstraint tableName="user" columnName="phone_number" columnDataType="varchar(255)"/>
+    </changeSet>
+
 </databaseChangeLog>
