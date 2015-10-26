@@ -85,4 +85,46 @@
         <addNotNullConstraint tableName="user" columnName="phone_number" columnDataType="varchar(255)"/>
     </changeSet>
 
+    <changeSet id="7" author="raguzin">
+        <createTable tableName="system_role">
+            <column name="id" type="integer" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="rolename" type="varchar(255)"/>
+        </createTable>
+        <addNotNullConstraint tableName="system_role" columnName="rolename" columnDataType="varchar(255)"/>
+        <createTable tableName="system_user">
+            <column name="id" type="integer" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="username" type="varchar(255)"/>
+            <column name="password" type="varchar(1024)"/>
+        </createTable>
+        <addNotNullConstraint tableName="system_user" columnName="username" columnDataType="varchar(255)"/>
+        <addNotNullConstraint tableName="system_user" columnName="password" columnDataType="varchar(1024)"/>
+        <createTable tableName="system_user_role">
+            <column name="system_user_id" type="integer"/>
+            <column name="role_id" type="integer"/>
+        </createTable>
+        <addNotNullConstraint tableName="system_user_role" columnName="system_user_id" columnDataType="integer"/>
+        <addNotNullConstraint tableName="system_user_role" columnName="role_id" columnDataType="integer"/>
+        <addForeignKeyConstraint baseColumnNames="system_user_id" baseTableName="system_user_role"
+                                 constraintName="fk_system_user_role_to_user"
+                                 referencedColumnNames="id" referencedTableName="system_user"/>
+        <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="system_user_role"
+                                 constraintName="fk_system_user_role_to_role"
+                                 referencedColumnNames="id" referencedTableName="system_role"/>
+        <insert tableName="system_role">
+            <column name="rolename" value="ADMIN"/>
+        </insert>
+        <insert tableName="system_user">
+            <column name="username" value="backoffice"/>
+            <column name="password" value="$2a$10$9pqrHl2toJfM1DWjtOog4e/y5UYEhRVRuO0JoUA85Ve/3uyQz8.By"/>
+        </insert>
+        <insert tableName="system_user_role">
+            <column name="system_user_id" value="1"/>
+            <column name="role_id" value="1"/>
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>

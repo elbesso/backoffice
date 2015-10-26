@@ -95,4 +95,20 @@ public class Invite {
     public void setProduct(Product product) {
         this.product = product;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Invite)) return false;
+
+        Invite invite1 = (Invite) o;
+
+        return invite.equals(invite1.invite);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return invite.hashCode();
+    }
 }
