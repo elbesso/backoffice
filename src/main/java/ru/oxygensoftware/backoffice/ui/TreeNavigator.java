@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import ru.oxygensoftware.backoffice.service.ApplicationService;
-import ru.oxygensoftware.backoffice.ui.view.InviteTableView;
 import ru.oxygensoftware.backoffice.ui.view.ProductView;
 import ru.oxygensoftware.backoffice.ui.view.UserView;
+import ru.oxygensoftware.backoffice.ui.view.invite.InviteTableView;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;

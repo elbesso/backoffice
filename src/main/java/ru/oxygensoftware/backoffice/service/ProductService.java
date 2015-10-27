@@ -14,9 +14,13 @@ public class ProductService {
     private EntityManager em;
 
     public Product create(String name) {
-        Product result = new Product();
+        Product result = create();
         result.setName(name);
         return result;
+    }
+
+    public Product create() {
+        return new Product();
     }
 
     @Transactional

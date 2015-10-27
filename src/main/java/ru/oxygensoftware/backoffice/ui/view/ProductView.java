@@ -1,5 +1,8 @@
 package ru.oxygensoftware.backoffice.ui.view;
 
+import com.vaadin.data.Validatable;
+import com.vaadin.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -26,6 +29,7 @@ public class ProductView extends VerticalLayout implements View {
         Table table = new Table();
         table.setContainerDataSource(container);
         table.setVisibleColumns("id", "name");
+        table.setColumnHeaders("ID", "Product Name");
         table.setSizeFull();
         table.setSelectable(true);
         table.setMultiSelect(true);
@@ -66,21 +70,35 @@ public class ProductView extends VerticalLayout implements View {
 
     private class AddProductWindow extends Window {
         public AddProductWindow() {
-            setCaption("Add Product");
-            setWidth("300px");
-            setHeight("150px");
-            FormLayout layout = new FormLayout();
-            layout.setSizeFull();
-            TextField textField = new TextField();
+            BeanFieldGroup<Product> fieldGroup = new BeanFieldGroup<>(Product.class);
+            fieldGroup.setItemDataSource(service.create());
+
+            TextField name = fieldGroup.buildAndBind("Product Name", "name", TextField.class);
+            name.setNullRepresentation("");
+            name.setRequiredError("Product name should not be null");
+            name.setRequired(true);
+
             Button save = new Button("Save", event -> {
-                Product newProduct = service.create(textField.getValue());
-                service.save(newProduct);
-                this.close();
-                refresh();
+                try {
+                    fieldGroup.getFields().forEach(Validatable::validate);
+                    fieldGroup.commit();
+                    service.save(fieldGroup.getItemDataSource().getBean());
+                    this.close();
+                    refresh();
+                } catch (FieldGroup.CommitException e) {
+                    Notification.show(e.getMessage());
+                }
             });
             save.setWidthUndefined();
-            layout.addComponents(textField, save);
+
+            FormLayout layout = new FormLayout();
+            layout.setSizeUndefined();
+            layout.addComponents(name, save);
             layout.setComponentAlignment(save, Alignment.MIDDLE_CENTER);
+            layout.setMargin(true);
+            layout.setSpacing(true);
+
+            setCaption("Add Product");
             setContent(layout);
             center();
             setModal(true);

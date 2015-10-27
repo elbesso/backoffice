@@ -1,6 +1,10 @@
-package ru.oxygensoftware.backoffice.ui.view;
+package ru.oxygensoftware.backoffice.ui.view.invite;
 
+import com.vaadin.data.Validator;
+import com.vaadin.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.data.validator.NullValidator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
@@ -74,18 +78,47 @@ public class InviteTableView extends VerticalLayout implements View {
 
     private class GenerateInvitesWindow extends Window {
         public GenerateInvitesWindow() {
+            BeanFieldGroup<InviteDto> fieldGroup = new BeanFieldGroup<>(InviteDto.class);
+            fieldGroup.setItemDataSource(new InviteDto());
+
             ComboBox product = new ComboBox("Product");
             product.setContainerDataSource(new BeanItemContainer<>(Product.class, productService.getAll()));
             product.setItemCaptionPropertyId("name");
             product.setItemCaptionMode(AbstractSelect.ItemCaptionMode.PROPERTY);
             product.setNullSelectionAllowed(false);
+            product.setRequired(true);
+            product.addValidator(new NullValidator("Select a product", false));
+            product.setImmediate(true);
+//            product.setRequiredError("Select a product");
+            fieldGroup.bind(product, "product");
 
-            DateField dateExpire = new DateField("Expiration date");
+            DateField dateExpire = fieldGroup.buildAndBind("Expiration date", "dateExpire", DateField.class);
+            dateExpire.setRequired(true);
+            dateExpire.setImmediate(true);
+//            dateExpire.setRequiredError("You should select expiration date");
+
+//            TextField amount = fieldGroup.buildAndBind("Amount", "amount", TextField.class);
             TextField amount = new TextField("Amount");
+            amount.setRequired(true);
+//            amount.setRequiredError("You should specify an amount of invites");
+            amount.setNullRepresentation("");
+            amount.setNullSettingAllowed(true);
+            amount.setImmediate(true);
+//            amount.addValidator(new NullValidator("You should specify an amount of invites", false));
+            amount.setValidationVisible(true);
+//            fieldGroup.bind(amount, "amount");
             Button generate = new Button("Generate", event -> {
-                service.generateInvites(Long.parseLong(amount.getValue()), (Product) product.getValue(), dateExpire.getValue());
-                refresh();
-                this.close();
+                try {
+//                    fieldGroup.getFields().forEach(Validatable::validate);
+                    fieldGroup.commit();
+                    service.generateInvites(Long.parseLong(amount.getValue()), (Product) product.getValue(), dateExpire.getValue());
+                    refresh();
+                    this.close();
+                } catch (Validator.InvalidValueException ive) {
+//                    ive.
+                } catch (FieldGroup.CommitException e) {
+                    Notification.show(e.getMessage());
+                }
             });
 
             FormLayout layout = new FormLayout(product, dateExpire, amount, generate);
