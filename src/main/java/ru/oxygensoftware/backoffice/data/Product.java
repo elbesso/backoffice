@@ -1,6 +1,9 @@
 package ru.oxygensoftware.backoffice.data;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import java.util.Set;
 
 /**
@@ -8,24 +11,12 @@ import java.util.Set;
  */
 
 @Entity
-public class Product {
-    @Id
-    @GeneratedValue
-    private Integer id;
-
+public class Product extends SystemObject {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<Invite> invites;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;

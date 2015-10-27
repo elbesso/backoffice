@@ -1,15 +1,14 @@
 package ru.oxygensoftware.backoffice.data;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.util.Date;
 
 @Entity
-public class Invite {
-    @Id
-    @GeneratedValue
-    private Integer id;
-
-    @Column(name = "invite")
+public class Invite extends SystemObject {
+    @Column(name = "invite", nullable = false, unique = true)
     private String invite;
 
     @ManyToOne
@@ -31,14 +30,6 @@ public class Invite {
 
     @Column(name = "comment")
     private String comment;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getInvite() {
         return invite;
@@ -103,12 +94,12 @@ public class Invite {
 
         Invite invite1 = (Invite) o;
 
-        return invite.equals(invite1.invite);
+        return invite == null || invite.equals(invite1.invite);
 
     }
 
     @Override
     public int hashCode() {
-        return invite.hashCode();
+        return invite != null ? invite.hashCode() : 0;
     }
 }

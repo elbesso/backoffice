@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import ru.oxygensoftware.backoffice.data.SystemUser;
-import ru.oxygensoftware.backoffice.ui.view.ViewName;
 
 import java.util.ArrayList;
 
@@ -24,7 +23,6 @@ public class ApplicationService {
 
     public void navigateTo(String view) {
         if (view == null) {
-            getNavigator().navigateTo(ViewName.MAIN);
             return;
         }
         getNavigator().navigateTo(view);

@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import ru.oxygensoftware.backoffice.service.ApplicationService;
-import ru.oxygensoftware.backoffice.ui.view.ViewName;
+import ru.oxygensoftware.backoffice.ui.view.InviteTableView;
+import ru.oxygensoftware.backoffice.ui.view.ProductView;
+import ru.oxygensoftware.backoffice.ui.view.UserView;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
@@ -30,7 +32,9 @@ public class TreeNavigator extends Tree {
         setHeight("100%");
         setNullSelectionAllowed(false);
 
-        addItem("Table", null, null, ViewName.TABLE, false);
+        addItem("Table", null, null, InviteTableView.NAME, false);
+        addItem("Product", null, null, ProductView.NAME, false);
+        addItem("User", null, null, UserView.NAME, false);
     }
 
     private void value(Property.ValueChangeEvent event) {
@@ -39,7 +43,9 @@ public class TreeNavigator extends Tree {
             return;
         }
         String viewName = viewMap.get(itemId);
-        app.navigateTo(viewName);
+        if (viewName != null && !viewName.isEmpty()) {
+            app.navigateTo(viewName);
+        }
     }
 
     private Item addItem(String message, String parentId, Resource icon, String viewName, boolean isChildrenAllowed) {

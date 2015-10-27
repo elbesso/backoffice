@@ -61,4 +61,13 @@ public class InviteService {
         }
         return sb.toString();
     }
+
+    @Transactional
+    public void delete(Integer id) {
+        em.remove(get(id));
+    }
+
+    public Invite get(Integer id) {
+        return em.find(Invite.class, id);
+    }
 }
