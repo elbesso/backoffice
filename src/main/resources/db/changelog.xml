@@ -154,4 +154,8 @@
         <modifyDataType tableName="invite" columnName="date_activated" newDataType="datetime"/>
     </changeSet>
 
+    <changeSet id="11" author="raguzin">
+        <modifyDataType tableName="system_token" columnName="last_used" newDataType="datetime"/>
+    </changeSet>
+
 </databaseChangeLog>
