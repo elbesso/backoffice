@@ -147,7 +147,7 @@
         <dropColumn tableName="system_token" columnName="id"/>
         <addPrimaryKey tableName="system_token" columnNames="series"/>
     </changeSet>
-    
+
     <changeSet id="10" author="raguzin">
         <modifyDataType tableName="invite" columnName="date_created" newDataType="datetime"/>
         <modifyDataType tableName="invite" columnName="date_expire" newDataType="datetime"/>

@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
-import ru.oxygensoftware.backoffice.service.ApplicationTokenRepository;
 
 @Configuration
 @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)

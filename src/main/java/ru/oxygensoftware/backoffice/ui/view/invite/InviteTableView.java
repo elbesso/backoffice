@@ -1,16 +1,10 @@
 package ru.oxygensoftware.backoffice.ui.view.invite;
 
-import com.vaadin.data.Buffered;
-import com.vaadin.data.Validator;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.data.validator.LongRangeValidator;
-import com.vaadin.data.validator.NullValidator;
-import com.vaadin.data.validator.RangeValidator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.server.UserError;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
