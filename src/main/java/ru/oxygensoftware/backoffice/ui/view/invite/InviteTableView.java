@@ -1,15 +1,20 @@
 package ru.oxygensoftware.backoffice.ui.view.invite;
 
+import com.vaadin.data.Buffered;
 import com.vaadin.data.Validator;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.data.validator.LongRangeValidator;
 import com.vaadin.data.validator.NullValidator;
+import com.vaadin.data.validator.RangeValidator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.UserError;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.tepi.filtertable.FilterTable;
 import ru.oxygensoftware.backoffice.data.Invite;
 import ru.oxygensoftware.backoffice.data.Product;
 import ru.oxygensoftware.backoffice.service.InviteService;
@@ -32,15 +37,17 @@ public class InviteTableView extends VerticalLayout implements View {
     public void init() {
         container.addAll(service.getAll());
         container.addNestedContainerProperty("product.name");
-        Table table = new Table();
+        FilterTable table = new FilterTable();
         table.setContainerDataSource(container);
         table.setVisibleColumns("id", "invite", "product.name", "dateCreated", "dateExpire", "dateActivated", "user",
                 "comment");
         table.setColumnHeaders("ID", "Invite", "Product Name", "Creation Date", "Expiration Date", "Activation Date",
                 "User", "Comment");
         table.setSizeFull();
+        table.setWidth("100%");
         table.setSelectable(true);
         table.setMultiSelect(true);
+        table.setFilterBarVisible(true);
 
         Button generate = new Button("Generate", event -> {
             UI.getCurrent().addWindow(new GenerateInvitesWindow());
@@ -87,41 +94,37 @@ public class InviteTableView extends VerticalLayout implements View {
             product.setItemCaptionMode(AbstractSelect.ItemCaptionMode.PROPERTY);
             product.setNullSelectionAllowed(false);
             product.setRequired(true);
-            product.addValidator(new NullValidator("Select a product", false));
             product.setImmediate(true);
-//            product.setRequiredError("Select a product");
+            product.setRequiredError("Select a product");
             fieldGroup.bind(product, "product");
 
             DateField dateExpire = fieldGroup.buildAndBind("Expiration date", "dateExpire", DateField.class);
             dateExpire.setRequired(true);
             dateExpire.setImmediate(true);
-//            dateExpire.setRequiredError("You should select expiration date");
+            dateExpire.setRequiredError("You should select expiration date");
 
-//            TextField amount = fieldGroup.buildAndBind("Amount", "amount", TextField.class);
-            TextField amount = new TextField("Amount");
+            TextField amount = fieldGroup.buildAndBind("Amount", "amount", TextField.class);
             amount.setRequired(true);
-//            amount.setRequiredError("You should specify an amount of invites");
+            amount.setRequiredError("You should specify an amount of invites");
             amount.setNullRepresentation("");
-            amount.setNullSettingAllowed(true);
             amount.setImmediate(true);
-//            amount.addValidator(new NullValidator("You should specify an amount of invites", false));
-            amount.setValidationVisible(true);
-//            fieldGroup.bind(amount, "amount");
+
+            TextField comment = fieldGroup.buildAndBind("Comment", "comment", TextField.class);
+            comment.setNullRepresentation("");
+
             Button generate = new Button("Generate", event -> {
                 try {
-//                    fieldGroup.getFields().forEach(Validatable::validate);
                     fieldGroup.commit();
-                    service.generateInvites(Long.parseLong(amount.getValue()), (Product) product.getValue(), dateExpire.getValue());
+                    InviteDto dto = fieldGroup.getItemDataSource().getBean();
+                    service.generateInvites(dto.getAmount(), dto.getProduct(), dto.getDateExpire(), dto.getComment());
                     refresh();
                     this.close();
-                } catch (Validator.InvalidValueException ive) {
-//                    ive.
                 } catch (FieldGroup.CommitException e) {
                     Notification.show(e.getMessage());
                 }
             });
 
-            FormLayout layout = new FormLayout(product, dateExpire, amount, generate);
+            FormLayout layout = new FormLayout(product, dateExpire, amount, comment, generate);
             layout.setSizeUndefined();
             layout.setComponentAlignment(generate, Alignment.MIDDLE_CENTER);
             layout.setMargin(true);

@@ -40,31 +40,8 @@ public class ApplicationService {
         }
     }
 
-    public SystemUser getSystemUser() {
-        UserDetails details = getUser();
-        if (details instanceof SystemUser) {
-            return (SystemUser) details;
-        }
-        return null;
-    }
-
-    public void login() {
-        UI.getCurrent().getPage().setLocation("/spring_security_login");
-    }
-
-    public <T> void login(T unused) {
-        login();
-    }
-
     public void logout() {
-        UI.getCurrent().getPage().setLocation("/j_spring_security_logout");
-    }
-
-    public void reload() {
-        UI.getCurrent().getPage().reload();
-    }
-
-    public <T> void logout(T unused) {
-        logout();
+        UI.getCurrent().getSession().close();
+        UI.getCurrent().getPage().setLocation("/logout");
     }
 }

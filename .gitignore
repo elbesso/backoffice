@@ -14,3 +14,9 @@ hs_err_pid*
 .idea
 target
 *.scss.cache
+
+src/main/webapp/VAADIN/widgetsets
+src/main/webapp/VAADIN/gwt-unitCache
+src/main/webapp/VAADIN/themes/mytheme/addons.scss
+src/main/webapp/VAADIN/themes/mytheme/styles.css
+localhost_files

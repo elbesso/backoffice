@@ -14,12 +14,13 @@ public class InviteService {
     @PersistenceContext
     private EntityManager em;
 
-    public Invite create(Date expire, Product product) {
+    public Invite create(Date expire, Product product, String comment) {
         Invite result = new Invite();
         result.setDateCreated(new Date(System.currentTimeMillis()));
         result.setDateExpire(expire);
         result.setInvite(generateInviteString());
         result.setProduct(product);
+        result.setComment(comment);
         return result;
     }
 
@@ -33,13 +34,13 @@ public class InviteService {
     }
 
     @Transactional
-    public void generateInvites(Long amount, Product product, Date expire) {
+    public void generateInvites(Long amount, Product product, Date expire, String comment) {
         final Set<Invite> initialSet = new HashSet<>(getAll());
         final Set<Invite> result = new HashSet<>(initialSet);
         boolean contains = false;
         for (long i = 0; i < amount; i++) {
             while (!contains) {
-                contains = result.add(create(expire, product));
+                contains = result.add(create(expire, product, comment));
             }
             contains = false;
         }
@@ -48,7 +49,7 @@ public class InviteService {
     }
 
     private String generateInviteString() {
-        final char[] symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890".toCharArray();
+        final char[] symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".toCharArray();
         Random generator = new Random();
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 4; i++) {

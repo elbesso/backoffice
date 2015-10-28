@@ -127,4 +127,31 @@
         </insert>
     </changeSet>
 
+    <changeSet id="8" author="raguzin">
+        <createTable tableName="system_token">
+            <column name="id" type="integer" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="series" type="varchar(64)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="username" type="varchar(48)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="token" type="varchar(64)"/>
+            <column name="last_used" type="date"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="9" author="raguzin">
+        <dropColumn tableName="system_token" columnName="id"/>
+        <addPrimaryKey tableName="system_token" columnNames="series"/>
+    </changeSet>
+    
+    <changeSet id="10" author="raguzin">
+        <modifyDataType tableName="invite" columnName="date_created" newDataType="datetime"/>
+        <modifyDataType tableName="invite" columnName="date_expire" newDataType="datetime"/>
+        <modifyDataType tableName="invite" columnName="date_activated" newDataType="datetime"/>
+    </changeSet>
+
 </databaseChangeLog>

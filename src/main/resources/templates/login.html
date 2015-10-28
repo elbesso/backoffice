@@ -1,26 +1,73 @@
 <!DOCTYPE html>
+<html>
 <head>
-    <title>Login</title>
-    <link rel="stylesheet" href="../../css/bootstrap.min.css"/>
-</head>
-<body onload="document.form.username.focus();">
-<div class="container">
-    <div class="navbar">
-        <div class="navbar-inner">
-            <a class="brand" href="http://www.oxygensoftware.ru">Oxygensoftware </a>
-        </div>
-    </div>
-    <div class="content">
-        <h2>Login with Username and Password</h2>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
-        <form name="form" action="/login" method="POST">
-            <fieldset>
-                <input type="text" name="username" value="" placeholder="Username"/>
-                <input type="password" name="password" placeholder="Password"/>
-            </fieldset>
-            <input type="submit" id="login" value="Login"
-                   class="btn btn-primary"/>
-        </form>
+    <meta http-equiv="X-UA-Compatible" content="IE=11;chrome=1"/>
+    <style type="text/css">html, body {
+        height: 100%;
+        margin: 0;
+    }</style>
+    <link rel="stylesheet" type="text/css" href="VAADIN/themes/mytheme/styles.css"/>
+    <style type="text/css"></style>
+</head>
+<body scroll="auto" class=" v-generated-body v-sa v-ch v-webkit v-lin">
+<div id="ROOT-2521314" class=" v-app mytheme myvaadinui">
+    <div tabindex="1" class="v-ui v-scrollable" style="width: 100%; height: 100%;">
+        <div class="v-loading-indicator first" style="position: absolute; display: none;"></div>
+        <div class="v-verticallayout v-layout v-vertical v-widget v-has-width v-has-height v-margin-top v-margin-right
+        v-margin-bottom v-margin-left"
+             style="position: absolute; width: 100%; height: 100%;">
+            <div class="v-expand" style="padding-top: 66px;">
+                <div class="v-slot v-align-center v-align-middle" style="margin-top: -66px;">
+                    <div class="v-label v-widget v-label-undef-w">Oxygen Software</div>
+                </div>
+                <div class="v-spacing"></div>
+                <div class="v-slot">
+                    <div class="v-label v-widget v-has-width" style="width: 100%;">
+                        <hr/>
+                    </div>
+                </div>
+                <div class="v-spacing"></div>
+                <div class="v-slot" style="height: 100%;">
+                    <form method="post" action="/login">
+                    <div class="v-horizontallayout v-layout v-horizontal v-widget v-has-width"
+                         style="width: 100%; height: 245px;">
+                        <div class="v-expand" style="padding-left: 0;">
+                            <div class="v-slot v-align-center v-align-middle" style="width: 100%; margin-left: 0;">
+                                <div class="v-verticallayout v-layout v-vertical v-widget v-margin-top v-margin-right
+                                v-margin-bottom v-margin-left">
+                                        <div class="v-slot"><input type="text"
+                                                                   class="v-textfield v-widget v-textfield-prompt"
+                                                                   tabindex="0" name="username" placeholder="Username"/></div>
+                                        <div class="v-spacing"></div>
+                                        <div class="v-slot"><input type="password"
+                                                                   class="v-textfield v-widget v-textfield-prompt"
+                                                                   tabindex="0" name="password" placeholder="Password"/></div>
+                                        <div class="v-spacing"></div>
+                                        <div class="v-slot"><span class="v-checkbox v-widget"><input type="checkbox"
+                                                                                                     value="on"
+                                                                                                     id="gwt-uid-2"
+                                                                                                     tabindex="0"
+                                                                                                     name="remember-me"/>
+                                            <label for="gwt-uid-2">Remember me</label></span></div>
+                                        <div class="v-spacing"></div>
+                                        <div class="v-slot">
+                                            <button type="submit" tabindex="4" class="v-button v-widget">
+                                                <span class="v-button-wrap">
+                                                    <span class="v-button-caption">Submit</span>
+                                                </span>
+                                            </button>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 </body>
+</html>

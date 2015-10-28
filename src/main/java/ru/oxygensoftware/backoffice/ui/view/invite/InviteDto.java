@@ -11,6 +11,20 @@ public class InviteDto {
     private Date dateExpire;
     private Long amount;
     private Product product;
+    private String comment;
+
+    public InviteDto() {
+        dateExpire = new Date();
+        amount = 0l;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 
     public Product getProduct() {
         return product;

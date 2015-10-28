@@ -35,12 +35,15 @@ public class TreeNavigator extends Tree {
         addItem("Table", null, null, InviteTableView.NAME, false);
         addItem("Product", null, null, ProductView.NAME, false);
         addItem("User", null, null, UserView.NAME, false);
+        addItem("Logout", null, null, null, false);
     }
 
     private void value(Property.ValueChangeEvent event) {
         Object itemId = event.getProperty().getValue();
         if (itemId == null) {
             return;
+        } else if (itemId.equals("Logout")) {
+            app.logout();
         }
         String viewName = viewMap.get(itemId);
         if (viewName != null && !viewName.isEmpty()) {
@@ -54,7 +57,9 @@ public class TreeNavigator extends Tree {
         setItemIcon(message, icon);
         setChildrenAllowed(message, isChildrenAllowed);
         setParent(message, parentId);
-        viewMap.put(message, viewName);
+        if (!message.equals("Logout")) {
+            viewMap.put(message, viewName);
+        }
         return item;
     }
 }
