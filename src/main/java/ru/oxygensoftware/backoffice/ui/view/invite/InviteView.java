@@ -6,7 +6,7 @@ import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.data.validator.IntegerRangeValidator;
+import com.vaadin.data.validator.LongRangeValidator;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -102,6 +102,22 @@ public class InviteView extends VerticalLayout implements View {
         container.addAll(service.getAll());
     }
 
+    private void openWindow(Window window) {
+        UI.getCurrent().addWindow(window);
+    }
+
+    private ComboBox createProduct() {
+        ComboBox result = new ComboBox("Product");
+        result.setContainerDataSource(new BeanItemContainer<>(Product.class, productService.getAll()));
+        result.setItemCaptionPropertyId("name");
+        result.setItemCaptionMode(AbstractSelect.ItemCaptionMode.PROPERTY);
+        result.setNullSelectionAllowed(false);
+        result.setRequired(true);
+        result.setImmediate(true);
+        result.setRequiredError("Select a product");
+        return result;
+    }
+
     private class GenerateInvitesWindow extends Window {
         public GenerateInvitesWindow() {
             BeanFieldGroup<InviteDto> fieldGroup = new BeanFieldGroup<>(InviteDto.class);
@@ -128,7 +144,7 @@ public class InviteView extends VerticalLayout implements View {
             amount.setRequiredError("You should specify an amount of invites");
             amount.setNullRepresentation("");
             amount.setImmediate(true);
-            amount.addValidator(new IntegerRangeValidator("Value must be integer in a range from 1 to 100000", 1, 100000));
+            amount.addValidator(new LongRangeValidator("Value must be long in a range from 1 to 100000", 1L, 100000L));
 
             TextField comment = fieldGroup.buildAndBind("Comment", "comment", TextField.class);
             comment.setNullRepresentation("");
@@ -230,21 +246,5 @@ public class InviteView extends VerticalLayout implements View {
             setModal(true);
             setResizable(false);
         }
-    }
-
-    private void openWindow(Window window) {
-        UI.getCurrent().addWindow(window);
-    }
-
-    private ComboBox createProduct() {
-        ComboBox result = new ComboBox("Product");
-        result.setContainerDataSource(new BeanItemContainer<>(Product.class, productService.getAll()));
-        result.setItemCaptionPropertyId("name");
-        result.setItemCaptionMode(AbstractSelect.ItemCaptionMode.PROPERTY);
-        result.setNullSelectionAllowed(false);
-        result.setRequired(true);
-        result.setImmediate(true);
-        result.setRequiredError("Select a product");
-        return result;
     }
 }

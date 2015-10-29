@@ -11,9 +11,9 @@
     <link rel="stylesheet" type="text/css" href="VAADIN/themes/mytheme/styles.css"/>
     <style type="text/css"></style>
 </head>
-<body scroll="auto" class=" v-generated-body v-sa v-ch v-webkit v-lin">
+<body class=" v-generated-body v-sa v-ch v-webkit v-lin" onload="document.getElementById('username_id').focus();">
 <div id="ROOT-2521314" class=" v-app mytheme myvaadinui">
-    <div tabindex="1" class="v-ui v-scrollable" style="width: 100%; height: 100%;">
+    <div class="v-ui v-scrollable" style="width: 100%; height: 100%;">
         <div class="v-loading-indicator first" style="position: absolute; display: none;"></div>
         <div class="v-verticallayout v-layout v-vertical v-widget v-has-width v-has-height v-margin-top v-margin-right
         v-margin-bottom v-margin-left"
@@ -39,18 +39,19 @@
                                 v-margin-bottom v-margin-left">
                                         <div class="v-slot"><input type="text"
                                                                    class="v-textfield v-widget v-textfield-prompt"
-                                                                   tabindex="0" name="username" placeholder="Username"/>
+                                                                   tabindex="1" name="username" placeholder="Username"
+                                                                   id="username_id"/>
                                         </div>
                                         <div class="v-spacing"></div>
                                         <div class="v-slot"><input type="password"
                                                                    class="v-textfield v-widget v-textfield-prompt"
-                                                                   tabindex="0" name="password" placeholder="Password"/>
+                                                                   tabindex="2" name="password" placeholder="Password"/>
                                         </div>
                                         <div class="v-spacing"></div>
                                         <div class="v-slot"><span class="v-checkbox v-widget"><input type="checkbox"
                                                                                                      value="on"
                                                                                                      id="gwt-uid-2"
-                                                                                                     tabindex="0"
+                                                                                                     tabindex="3"
                                                                                                      name="remember-me"/>
                                             <label for="gwt-uid-2">Remember me</label></span></div>
                                         <div class="v-spacing"></div>
@@ -61,8 +62,8 @@
                                                 </span>
                                             </button>
                                             <!--<input type="hidden"-->
-                                                   <!--name="${_csrf.parameterName}"-->
-                                                   <!--value="${_csrf.token}"/>-->
+                                            <!--name="${_csrf.parameterName}"-->
+                                            <!--value="${_csrf.token}"/>-->
                                         </div>
                                     </div>
                                 </div>

@@ -14,7 +14,6 @@ import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.hene.expandingtextarea.ExpandingTextArea;
 import ru.oxygensoftware.backoffice.data.ISO_3166_CountryCode;
-import ru.oxygensoftware.backoffice.data.Product;
 import ru.oxygensoftware.backoffice.data.User;
 import ru.oxygensoftware.backoffice.service.UserService;
 
@@ -93,8 +92,14 @@ public class UserView extends VerticalLayout implements View {
         UI.getCurrent().addWindow(window);
     }
 
+    @Override
+    public void enter(ViewChangeListener.ViewChangeEvent event) {
+
+    }
+
     private class EditUserWindow extends Window {
         private BeanFieldGroup<User> fieldGroup;
+
         public EditUserWindow() {
             build(null);
         }
@@ -129,7 +134,7 @@ public class UserView extends VerticalLayout implements View {
 //            TextField country = createUserTextField("Country", "country", true);
             TextField state = createUserTextField("State", "state", false);
             TextField city = createUserTextField("City", "city", true);
-            TextField postcode = createUserTextField("Postcode", "postcode",true);
+            TextField postcode = createUserTextField("Postcode", "postcode", true);
             ExpandingTextArea address = fieldGroup.buildAndBind("Address", "address", ExpandingTextArea.class);
             address.setRequiredError("Address should not be null");
             address.setRequired(true);
@@ -176,10 +181,5 @@ public class UserView extends VerticalLayout implements View {
             result.addValidator(new StringLengthValidator("Filed length must be less than or equal to 255", 0, 255, true));
             return result;
         }
-    }
-
-    @Override
-    public void enter(ViewChangeListener.ViewChangeEvent event) {
-
     }
 }
