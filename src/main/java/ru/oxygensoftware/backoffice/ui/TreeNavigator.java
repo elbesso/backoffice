@@ -2,26 +2,23 @@ package ru.oxygensoftware.backoffice.ui;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
-import com.vaadin.server.Resource;
 import com.vaadin.ui.Tree;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import ru.oxygensoftware.backoffice.service.ApplicationService;
 import ru.oxygensoftware.backoffice.ui.view.ProductView;
+import ru.oxygensoftware.backoffice.ui.view.SystemUserView;
 import ru.oxygensoftware.backoffice.ui.view.UserView;
-import ru.oxygensoftware.backoffice.ui.view.invite.InviteTableView;
+import ru.oxygensoftware.backoffice.ui.view.invite.InviteView;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 @Scope("prototype")
 public class TreeNavigator extends Tree {
     @Autowired
     private ApplicationService app;
-    private Map<String, String> viewMap = new HashMap<>();
 
     @PostConstruct
     public void init() {
@@ -32,10 +29,11 @@ public class TreeNavigator extends Tree {
         setHeight("100%");
         setNullSelectionAllowed(false);
 
-        addItem("Table", null, null, InviteTableView.NAME, false);
-        addItem("Product", null, null, ProductView.NAME, false);
-        addItem("User", null, null, UserView.NAME, false);
-        addItem("Logout", null, null, null, false);
+        addNewItem(InviteView.NAME);
+        addNewItem(ProductView.NAME);
+        addNewItem(UserView.NAME);
+        addNewItem(SystemUserView.NAME);
+        addNewItem("Logout");
     }
 
     private void value(Property.ValueChangeEvent event) {
@@ -44,22 +42,16 @@ public class TreeNavigator extends Tree {
             return;
         } else if (itemId.equals("Logout")) {
             app.logout();
+            return;
         }
-        String viewName = viewMap.get(itemId);
-        if (viewName != null && !viewName.isEmpty()) {
-            app.navigateTo(viewName);
-        }
+        app.navigateTo((String) itemId);
     }
 
-    private Item addItem(String message, String parentId, Resource icon, String viewName, boolean isChildrenAllowed) {
-        Item item = addItem(message);
-        setItemCaption(message, message);
-        setItemIcon(message, icon);
-        setChildrenAllowed(message, isChildrenAllowed);
-        setParent(message, parentId);
-        if (!message.equals("Logout")) {
-            viewMap.put(message, viewName);
-        }
+    private Item addNewItem(String viewName) {
+        Item item = addItem(viewName);
+        setItemCaption(viewName, viewName);
+        setChildrenAllowed(viewName, false);
+        setParent(viewName, null);
         return item;
     }
 }

@@ -15,8 +15,19 @@ public class Product extends SystemObject {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "product_code")
+    private String productCode;
+
     @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<Invite> invites;
+
+    public String getProductCode() {
+        return productCode;
+    }
+
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
+    }
 
     public String getName() {
         return name;

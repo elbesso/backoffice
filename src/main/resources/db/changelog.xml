@@ -158,4 +158,10 @@
         <modifyDataType tableName="system_token" columnName="last_used" newDataType="datetime"/>
     </changeSet>
 
+    <changeSet id="id" author="raguzin">
+        <addColumn tableName="product">
+            <column name="product_code" type="varchar(32)"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

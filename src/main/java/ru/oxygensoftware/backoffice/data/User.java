@@ -47,7 +47,7 @@ public class User {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<Invite> invites;
 
     public String getPhoneNumber() {
@@ -66,11 +66,11 @@ public class User {
         this.address = address;
     }
 
-    public String getPostCode() {
+    public String getPostcode() {
         return postcode;
     }
 
-    public void setPostCode(String postcode) {
+    public void setPostcode(String postcode) {
         this.postcode = postcode;
     }
 

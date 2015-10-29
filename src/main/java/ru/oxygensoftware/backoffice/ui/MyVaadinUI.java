@@ -19,11 +19,10 @@ public class MyVaadinUI extends UI {
     private SpringViewProvider viewProvider;
     @Autowired
     private TreeNavigator treeNavigator;
-    @Autowired
-    private ApplicationService app;
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
+
         final Panel viewContainer = new Panel();
         viewContainer.setSizeFull();
 

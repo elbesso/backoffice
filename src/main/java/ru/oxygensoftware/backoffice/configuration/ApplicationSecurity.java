@@ -26,12 +26,11 @@ public class ApplicationSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
-        http.authorizeRequests().antMatchers("/VAADIN/**").permitAll().anyRequest().authenticated()
+        http.csrf().disable().authorizeRequests().antMatchers("/VAADIN/**").permitAll().anyRequest().authenticated()
                 .and().formLogin().loginPage("/login").permitAll()
                 .and().logout().logoutUrl("/logout").logoutSuccessUrl("/login").invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID", "remember-me")
-                .and().rememberMe().userDetailsService(service).tokenRepository(repository).tokenValiditySeconds(1209600);
+                .and().rememberMe().key("veryprivatekey").userDetailsService(service).tokenRepository(repository).tokenValiditySeconds(1209600);
     }
 
     @Override

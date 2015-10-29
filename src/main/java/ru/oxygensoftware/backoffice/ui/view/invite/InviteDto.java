@@ -12,10 +12,20 @@ public class InviteDto {
     private Long amount;
     private Product product;
     private String comment;
+    private Date dateCreated;
 
     public InviteDto() {
         dateExpire = new Date();
+        dateCreated = new Date();
         amount = 0l;
+    }
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
     }
 
     public String getComment() {
