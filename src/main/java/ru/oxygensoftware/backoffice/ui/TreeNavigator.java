@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import ru.oxygensoftware.backoffice.service.ApplicationService;
 import ru.oxygensoftware.backoffice.ui.view.ProductView;
-import ru.oxygensoftware.backoffice.ui.view.SystemUserView;
+import ru.oxygensoftware.backoffice.ui.view.systemuser.SystemUserView;
 import ru.oxygensoftware.backoffice.ui.view.UserView;
 import ru.oxygensoftware.backoffice.ui.view.invite.InviteView;
 

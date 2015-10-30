@@ -102,10 +102,12 @@ public class UserView extends VerticalLayout implements View {
 
         public EditUserWindow() {
             build(null);
+            setCaption("Edit User");
         }
 
         public EditUserWindow(User user) {
             build(user);
+            setCaption("Add User");
         }
 
         private void build(User user) {
@@ -131,7 +133,6 @@ public class UserView extends VerticalLayout implements View {
             TextField organization = createUserTextField("Organization", "organization", false);
             TextField position = createUserTextField("Position", "position", false);
             TextField email = createUserTextField("Email", "email", true);
-//            TextField country = createUserTextField("Country", "country", true);
             TextField state = createUserTextField("State", "state", false);
             TextField city = createUserTextField("City", "city", true);
             TextField postcode = createUserTextField("Postcode", "postcode", true);
@@ -164,7 +165,6 @@ public class UserView extends VerticalLayout implements View {
             layout.setMargin(true);
             layout.setSpacing(true);
 
-            setCaption("Add User");
             setContent(layout);
             center();
             setModal(true);

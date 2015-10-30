@@ -99,10 +99,12 @@ public class ProductView extends VerticalLayout implements View {
     private class EditProductWindow extends Window {
         public EditProductWindow() {
             build(null);
+            setCaption("Add Product");
         }
 
         public EditProductWindow(Product product) {
             build(product);
+            setCaption("Edit Product");
         }
 
         private void build(Product product) {
@@ -147,7 +149,6 @@ public class ProductView extends VerticalLayout implements View {
             layout.setMargin(true);
             layout.setSpacing(true);
 
-            setCaption("Add Product");
             setContent(layout);
             center();
             setModal(true);
