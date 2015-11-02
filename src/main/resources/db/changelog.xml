@@ -164,4 +164,8 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="12" author="raguzin">
+        <addUniqueConstraint tableName="system_role" columnNames="rolename"/>
+    </changeSet>
+
 </databaseChangeLog>

@@ -1,6 +1,5 @@
 package ru.oxygensoftware.backoffice.ui.view.systemuser;
 
-import com.vaadin.data.Validatable;
 import com.vaadin.data.Validator;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
@@ -12,10 +11,8 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.oxygensoftware.backoffice.data.SystemUser;
-import ru.oxygensoftware.backoffice.service.MyUserDetailsService;
 import ru.oxygensoftware.backoffice.service.SystemUserService;
 
 import javax.annotation.PostConstruct;
@@ -126,19 +123,19 @@ public class SystemUserView extends VerticalLayout implements View {
             }
 
             PasswordField confirmPassword = new PasswordField("Confirm password");
-            confirmPassword.setRequired(true);
             confirmPassword.setNullRepresentation("");
             confirmPassword.setVisible(false);
+            confirmPassword.setImmediate(true);
             confirmPassword.addValidator(value -> {
-                if (!value.equals(newPassword.getValue())) {
+                if (!newPassword.getValue().equals("") && !value.equals(newPassword.getValue())) {
                     throw new Validator.InvalidValueException("Passwords don't match");
                 }
             });
 
             oldPassword = new PasswordField("Old password");
-            oldPassword.setRequired(true);
             oldPassword.setNullRepresentation("");
             oldPassword.setVisible(false);
+            oldPassword.setImmediate(true);
             oldPassword.addValidator(value -> {
                 if (!newPassword.getValue().equals("") && !isCreate) {
                     if (!encoder.matches(oldPassword.getValue(), systemUser.getPassword())) {
@@ -151,39 +148,53 @@ public class SystemUserView extends VerticalLayout implements View {
             name.setNullRepresentation("");
             name.setRequiredError("System user's name should not be null");
             name.setRequired(true);
-            name.addValidator(new StringLengthValidator("Filed length must be less than or equal to 255", 0, 255, false));
+            name.addValidator(new StringLengthValidator("Filed length must be less than or equal to 255", 1, 255, false));
 
             newPassword = new PasswordField("New Password");
             newPassword.setNullRepresentation("");
-            newPassword.addValidator(new StringLengthValidator("Filed length must be greater than or equal to 6 and" +
-                    " less than or equal to 255", 1, 255, true));
+            newPassword.addValidator(value -> {
+                String v = (String) value;
+                if (v != null && !v.equals("")) {
+                    if ((v.length() < 6) || (v.length() > 255)) {
+                        throw new Validator.InvalidValueException("Filed length must be greater than or equal to 6 and " +
+                                "less than or equal to 255");
+                    }
+                }
+            });
             newPassword.setImmediate(true);
-            if (systemUser != null) {
+            if (systemUser == null) {
                 newPassword.setRequired(true);
             }
-            newPassword.addTextChangeListener(event -> {
-                if (event.getText().length() > 0) {
+            newPassword.addValueChangeListener(event -> {
+                if (((String) event.getProperty().getValue()).length() > 0) {
                     confirmPassword.setVisible(true);
+                    confirmPassword.setRequired(true);
                     if (!isCreate) {
                         oldPassword.setVisible(true);
+                        oldPassword.setRequired(true);
                     }
                 } else {
                     confirmPassword.setVisible(false);
+                    confirmPassword.setRequired(false);
                     oldPassword.setVisible(false);
+                    oldPassword.setRequired(false);
+                    oldPassword.setValue(null);
+                    confirmPassword.setValue(null);
                 }
             });
 
             Button save = new Button("Save", event -> {
                 try {
-                    fieldGroup.getFields().forEach(Validatable::validate);
                     oldPassword.validate();
                     newPassword.validate();
                     confirmPassword.validate();
                     fieldGroup.commit();
                     if (newPassword.getValue().length() > 0) {
                         fieldGroup.getItemDataSource().getBean().setPassword(newPassword.getValue());
+                        service.save(fieldGroup.getItemDataSource().getBean(), true);
+                    } else {
+                        service.save(fieldGroup.getItemDataSource().getBean(), false);
                     }
-                    service.save(fieldGroup.getItemDataSource().getBean());
                     this.close();
                     refresh();
                 } catch (Validator.InvalidValueException ive) {
