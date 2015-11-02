@@ -49,7 +49,7 @@ public class InviteService {
     }
 
     private String generateInviteString() {
-        final char[] symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".toCharArray();
+        final char[] symbols = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789".toCharArray();
         Random generator = new Random();
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 4; i++) {
