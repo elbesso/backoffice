@@ -168,4 +168,8 @@
         <addUniqueConstraint tableName="system_role" columnNames="rolename"/>
     </changeSet>
 
+    <changeSet id="13" author="raguzin">
+        <addUniqueConstraint tableName="user" columnNames="name, surname, email"/>
+    </changeSet>
+
 </databaseChangeLog>
