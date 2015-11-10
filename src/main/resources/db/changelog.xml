@@ -172,4 +172,20 @@
         <addUniqueConstraint tableName="user" columnNames="name, surname, email"/>
     </changeSet>
 
+    <changeSet id="14" author="raguzin">
+        <createTable tableName="invite_lockout">
+            <column name="ip" type="varchar(255)">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="first_failed_time" type="datetime"/>
+            <column name="failed_count" type="int"/>
+        </createTable>
+        <createTable tableName="captcha_lockout">
+            <column name="ip" type="varchar(255)">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="first_failed_time" type="datetime"/>
+            <column name="failed_count" type="int"/>
+        </createTable>
+    </changeSet>
 </databaseChangeLog>
