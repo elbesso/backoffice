@@ -9,34 +9,25 @@ import java.util.Set;
  */
 
 @Entity
-public class State {
+public class Country {
     @Id
     private String id;
 
     @Column(name = "name")
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "country_id")
-    private Country country;
-
-    @OneToMany(mappedBy = "state", fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "country", fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<User> users;
 
-    public Set<User> getUsers() {
-        return users;
+    @OneToMany(mappedBy = "country", fetch = FetchType.EAGER, orphanRemoval = true)
+    private Set<State> state;
+
+    public Set<State> getState() {
+        return state;
     }
 
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
-
-    public Country getCountry() {
-        return country;
-    }
-
-    public void setCountry(Country country) {
-        this.country = country;
+    public void setState(Set<State> state) {
+        this.state = state;
     }
 
     public String getId() {
@@ -55,14 +46,22 @@ public class State {
         this.name = name;
     }
 
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof State)) return false;
+        if (!(o instanceof Country)) return false;
 
-        State state = (State) o;
+        Country country = (Country) o;
 
-        return getId().equals(state.getId());
+        return getId().equals(country.getId());
 
     }
 

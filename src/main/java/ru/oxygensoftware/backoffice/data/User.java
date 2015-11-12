@@ -28,12 +28,12 @@ public class User {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "country")
-    @Enumerated(EnumType.STRING)
-    private ISO_3166_CountryCode country;
+    @ManyToOne
+    @JoinColumn(name = "country_id")
+    private Country country;
 
-    @Column(name = "state")
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "state_id")
     private State state;
 
     @Column(name = "city")
@@ -91,11 +91,11 @@ public class User {
         this.state = state;
     }
 
-    public ISO_3166_CountryCode getCountry() {
+    public Country getCountry() {
         return country;
     }
 
-    public void setCountry(ISO_3166_CountryCode country) {
+    public void setCountry(Country country) {
         this.country = country;
     }
 
@@ -154,4 +154,6 @@ public class User {
     public void setInvites(Set<Invite> invites) {
         this.invites = invites;
     }
+
+
 }

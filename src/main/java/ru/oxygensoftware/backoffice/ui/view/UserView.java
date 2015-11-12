@@ -6,6 +6,7 @@ import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.data.util.filter.Compare;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -13,13 +14,17 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.hene.expandingtextarea.ExpandingTextArea;
-import ru.oxygensoftware.backoffice.data.ISO_3166_CountryCode;
+import ru.oxygensoftware.backoffice.data.Country;
 import ru.oxygensoftware.backoffice.data.State;
 import ru.oxygensoftware.backoffice.data.User;
+import ru.oxygensoftware.backoffice.service.CountryService;
 import ru.oxygensoftware.backoffice.service.UserService;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 @SpringView(name = UserView.NAME)
 public class UserView extends VerticalLayout implements View {
@@ -27,16 +32,20 @@ public class UserView extends VerticalLayout implements View {
     private BeanItemContainer<User> container = new BeanItemContainer<>(User.class);
     @Autowired
     private UserService service;
+    @Autowired
+    private CountryService countryService;
 
     @PostConstruct
     @SuppressWarnings("unchecked")
     public void init() {
         container.addAll(service.getAll());
+        container.addNestedContainerProperty("country.name");
+        container.addNestedContainerProperty("state.name");
         Table table = new Table();
         table.setContainerDataSource(container);
-        table.setVisibleColumns("id", "name", "surname", "organization", "position", "email", "country", "state",
+        table.setVisibleColumns("id", "name", "surname", "organization", "position", "email", "country.name", "state.name",
                 "city", "postcode", "address", "phoneNumber");
-        table.setColumnHeaders("ID", "Name", "Surname", "Organization", "Position", "Email", "Country", "State",
+        table.setColumnHeaders("ID", "Name", "Surname", "Organization", "Position", "Email", "Country", "State/Province",
                 "City", "Postcode", "Address", "Phone Number");
         table.setSizeFull();
         table.setSelectable(true);
@@ -100,6 +109,7 @@ public class UserView extends VerticalLayout implements View {
 
     private class EditUserWindow extends Window {
         private BeanFieldGroup<User> fieldGroup;
+
         public EditUserWindow() {
             build(null);
             setCaption("Edit User");
@@ -111,37 +121,54 @@ public class UserView extends VerticalLayout implements View {
         }
 
         private void build(User user) {
+            Country usa = new Country();
+            usa.setId("UNITED_STATES");
+            Country canada = new Country();
+            canada.setId("CANADA");
             fieldGroup = new BeanFieldGroup<>(User.class);
             if (user == null) {
                 fieldGroup.setItemDataSource(service.create());
             } else {
                 fieldGroup.setItemDataSource(user);
             }
-            ComboBox state = new ComboBox("State");
-            state.setContainerDataSource(new BeanItemContainer<>(State.class, Arrays.asList(State.values())));
-            state.setItemCaptionPropertyId("unnabreviated");
+            BeanItemContainer stateContainer = new BeanItemContainer<>(State.class, countryService.getAllStates());
+            ComboBox state = new ComboBox("State/Province");
             state.setItemCaptionMode(AbstractSelect.ItemCaptionMode.PROPERTY);
+            state.setItemCaptionPropertyId("name");
+            state.setContainerDataSource(stateContainer);
             state.setNullSelectionAllowed(true);
             state.setImmediate(true);
-            state.setRequiredError("Select a state");
+            state.setRequiredError("Select a state/province");
             state.setVisible(false);
             fieldGroup.bind(state, "state");
 
             ComboBox country = new ComboBox("Country");
-            country.setContainerDataSource(new BeanItemContainer<>(ISO_3166_CountryCode.class, Arrays.asList(ISO_3166_CountryCode.values())));
-            country.setItemCaptionPropertyId("countryName");
             country.setItemCaptionMode(AbstractSelect.ItemCaptionMode.PROPERTY);
+            country.setItemCaptionPropertyId("name");
+            country.setContainerDataSource(new BeanItemContainer<>(Country.class, countryService.getAllCountries()));
             country.setNullSelectionAllowed(false);
             country.setRequired(true);
             country.setImmediate(true);
             country.setRequiredError("Select a country");
+
             country.addValueChangeListener(event -> {
-                if (event.getProperty().getValue().equals(ISO_3166_CountryCode.UNITED_STATES)) {
-                    state.setVisible(true);
-                    state.setRequired(true);
+                boolean visible = (event.getProperty().getValue().equals(usa) || event.getProperty().getValue().equals(canada));
+                state.setVisible(visible);
+                state.setRequired(visible);
+                fieldGroup.getField("state").discard();
+                if (event.getProperty().getValue().equals(usa)) {
+                    stateContainer.removeAllContainerFilters();
+                    stateContainer.addContainerFilter(new Compare.Equal("country", usa));
+                    if (!stateContainer.containsId(state.getValue())) {
+                        state.setValue(null);
+                    }
+                } else if (event.getProperty().getValue().equals(canada)) {
+                    stateContainer.removeAllContainerFilters();
+                    stateContainer.addContainerFilter(new Compare.Equal("country", canada));
+                    if (!stateContainer.containsId(state.getValue())) {
+                        state.setValue(null);
+                    }
                 } else {
-                    state.setVisible(false);
-                    state.setRequired(false);
                     state.setValue(null);
                 }
             });

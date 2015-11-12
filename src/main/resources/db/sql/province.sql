@@ -1,0 +1,13 @@
+INSERT INTO province VALUES ('ALBERTA', 'Alberta');
+INSERT INTO province VALUES ('BRITISH_COLUMBIA', 'British Columbia');
+INSERT INTO province VALUES ('MANITOBA', 'Manitoba');
+INSERT INTO province VALUES ('NEW_BRUNSWICK', 'New Brunswick');
+INSERT INTO province VALUES ('NEWFOUNDLAND_AND_LABRADOR', 'Newfoundland and Labrador');
+INSERT INTO province VALUES ('NOVA_SCOTIA', 'Nova Scotia');
+INSERT INTO province VALUES ('ONTARIO', 'Ontario');
+INSERT INTO province VALUES ('PRINCE_EDWARD_ISLAND', 'Prince Edward Island');
+INSERT INTO province VALUES ('QUEBEC', 'Québec');
+INSERT INTO province VALUES ('SASKATCHEWAN', 'Saskatchewan');
+INSERT INTO province VALUES ('NORTHWEST_TERRITORIES', 'Northwest Territories');
+INSERT INTO province VALUES ('NUNAVUT', 'Nunavut');
+INSERT INTO province VALUES ('YUKON', 'Yukon');

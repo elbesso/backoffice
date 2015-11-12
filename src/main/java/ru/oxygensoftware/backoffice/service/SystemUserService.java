@@ -17,7 +17,7 @@ import java.util.List;
  * Date: 30.10.15
  */
 @Service
-public class SystemUserService  {
+public class SystemUserService {
     @PersistenceContext
     private EntityManager em;
     @Autowired
