@@ -14,6 +14,7 @@ import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.hene.expandingtextarea.ExpandingTextArea;
 import ru.oxygensoftware.backoffice.data.ISO_3166_CountryCode;
+import ru.oxygensoftware.backoffice.data.State;
 import ru.oxygensoftware.backoffice.data.User;
 import ru.oxygensoftware.backoffice.service.UserService;
 
@@ -99,7 +100,6 @@ public class UserView extends VerticalLayout implements View {
 
     private class EditUserWindow extends Window {
         private BeanFieldGroup<User> fieldGroup;
-
         public EditUserWindow() {
             build(null);
             setCaption("Edit User");
@@ -117,6 +117,15 @@ public class UserView extends VerticalLayout implements View {
             } else {
                 fieldGroup.setItemDataSource(user);
             }
+            ComboBox state = new ComboBox("State");
+            state.setContainerDataSource(new BeanItemContainer<>(State.class, Arrays.asList(State.values())));
+            state.setItemCaptionPropertyId("unnabreviated");
+            state.setItemCaptionMode(AbstractSelect.ItemCaptionMode.PROPERTY);
+            state.setNullSelectionAllowed(true);
+            state.setImmediate(true);
+            state.setRequiredError("Select a state");
+            state.setVisible(false);
+            fieldGroup.bind(state, "state");
 
             ComboBox country = new ComboBox("Country");
             country.setContainerDataSource(new BeanItemContainer<>(ISO_3166_CountryCode.class, Arrays.asList(ISO_3166_CountryCode.values())));
@@ -126,6 +135,16 @@ public class UserView extends VerticalLayout implements View {
             country.setRequired(true);
             country.setImmediate(true);
             country.setRequiredError("Select a country");
+            country.addValueChangeListener(event -> {
+                if (event.getProperty().getValue().equals(ISO_3166_CountryCode.UNITED_STATES)) {
+                    state.setVisible(true);
+                    state.setRequired(true);
+                } else {
+                    state.setVisible(false);
+                    state.setRequired(false);
+                    state.setValue(null);
+                }
+            });
             fieldGroup.bind(country, "country");
 
             TextField name = createUserTextField("Name", "name", true);
@@ -133,7 +152,7 @@ public class UserView extends VerticalLayout implements View {
             TextField organization = createUserTextField("Organization", "organization", false);
             TextField position = createUserTextField("Position", "position", false);
             TextField email = createUserTextField("Email", "email", true);
-            TextField state = createUserTextField("State", "state", false);
+
             TextField city = createUserTextField("City", "city", true);
             TextField postcode = createUserTextField("Postcode", "postcode", true);
             ExpandingTextArea address = fieldGroup.buildAndBind("Address", "address", ExpandingTextArea.class);

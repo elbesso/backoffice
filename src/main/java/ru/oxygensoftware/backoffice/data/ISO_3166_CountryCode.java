@@ -250,7 +250,7 @@ public enum ISO_3166_CountryCode {
     UKRAINE("Ukraine", "UA", "UKR", "804"),
     UNITED_ARAB_EMIRATES("United Arab Emirates", "AE", "ARE", "784"),
     UNITED_KINGDOM("United Kingdome", "GB", "GBR", "826"),
-    UNITED_STATES("Unites States", "US", "USA", "840"),
+    UNITED_STATES("United States", "US", "USA", "840"),
     UNITED_STATES_MINOR_OUTLYING_ISLANDS("United States Minor Outlying Islands", "UM", "UMI", "581"),
     URUGUAY("Uruguay", "UY", "URY", "858"),
     UZBEKISTAN("Uzbekistan", "UZ", "UZB", "860"),

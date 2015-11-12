@@ -33,7 +33,8 @@ public class User {
     private ISO_3166_CountryCode country;
 
     @Column(name = "state")
-    private String state;
+    @Enumerated(EnumType.STRING)
+    private State state;
 
     @Column(name = "city")
     private String city;
@@ -82,11 +83,11 @@ public class User {
         this.city = city;
     }
 
-    public String getState() {
+    public State getState() {
         return state;
     }
 
-    public void setState(String state) {
+    public void setState(State state) {
         this.state = state;
     }
 
