@@ -112,12 +112,12 @@ public class UserView extends VerticalLayout implements View {
 
         public EditUserWindow() {
             build(null);
-            setCaption("Edit User");
+            setCaption("Add User");
         }
 
         public EditUserWindow(User user) {
             build(user);
-            setCaption("Add User");
+            setCaption("Edit User");
         }
 
         private void build(User user) {
