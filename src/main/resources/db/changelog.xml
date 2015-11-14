@@ -32,6 +32,7 @@
             <column name="user_id" type="integer"/>
             <column name="comment" type="varchar(1024)"/>
         </createTable>
+        <sql>ALTER TABLE invite CONVERT TO CHARACTER SET utf8</sql>
     </changeSet>
 
     <changeSet id="4" author="raguzin">
@@ -45,6 +46,7 @@
             </column>
             <column name="name" type="varchar(255)"/>
         </createTable>
+        <sql>ALTER TABLE product CONVERT TO CHARACTER SET utf8</sql>
         <addForeignKeyConstraint baseTableName="invite" baseColumnNames="product_id"
                                  constraintName="fk_invite_to_product" referencedTableName="product"
                                  referencedColumnNames="id"/>
@@ -67,6 +69,7 @@
             <column name="address" type="varchar(1024)"/>
             <column name="phone_number" type="varchar(255)"/>
         </createTable>
+        <sql>ALTER TABLE user CONVERT TO CHARACTER SET utf8</sql>
         <delete tableName="invite"/>
         <addForeignKeyConstraint baseTableName="invite" baseColumnNames="user_id" constraintName="fk_invite_to_user"
                                  referencedTableName="user"
@@ -92,6 +95,7 @@
             </column>
             <column name="rolename" type="varchar(255)"/>
         </createTable>
+        <sql>ALTER TABLE system_role CONVERT TO CHARACTER SET utf8</sql>
         <addNotNullConstraint tableName="system_role" columnName="rolename" columnDataType="varchar(255)"/>
         <createTable tableName="system_user">
             <column name="id" type="integer" autoIncrement="true">
@@ -100,12 +104,14 @@
             <column name="username" type="varchar(255)"/>
             <column name="password" type="varchar(1024)"/>
         </createTable>
+        <sql>ALTER TABLE system_user CONVERT TO CHARACTER SET utf8</sql>
         <addNotNullConstraint tableName="system_user" columnName="username" columnDataType="varchar(255)"/>
         <addNotNullConstraint tableName="system_user" columnName="password" columnDataType="varchar(1024)"/>
         <createTable tableName="system_user_role">
             <column name="system_user_id" type="integer"/>
             <column name="role_id" type="integer"/>
         </createTable>
+        <sql>ALTER TABLE system_user_role CONVERT TO CHARACTER SET utf8</sql>
         <addNotNullConstraint tableName="system_user_role" columnName="system_user_id" columnDataType="integer"/>
         <addNotNullConstraint tableName="system_user_role" columnName="role_id" columnDataType="integer"/>
         <addForeignKeyConstraint baseColumnNames="system_user_id" baseTableName="system_user_role"
@@ -141,6 +147,7 @@
             <column name="token" type="varchar(64)"/>
             <column name="last_used" type="date"/>
         </createTable>
+        <sql>ALTER TABLE system_token CONVERT TO CHARACTER SET utf8</sql>
     </changeSet>
 
     <changeSet id="9" author="raguzin">
@@ -180,6 +187,7 @@
             <column name="first_failed_time" type="datetime"/>
             <column name="failed_count" type="int"/>
         </createTable>
+        <sql>ALTER TABLE invite_lockout CONVERT TO CHARACTER SET utf8</sql>
         <createTable tableName="captcha_lockout">
             <column name="ip" type="varchar(255)">
                 <constraints primaryKey="true"/>
@@ -187,6 +195,7 @@
             <column name="first_failed_time" type="datetime"/>
             <column name="failed_count" type="int"/>
         </createTable>
+        <sql>ALTER TABLE captcha_lockout CONVERT TO CHARACTER SET utf8</sql>
     </changeSet>
 
     <changeSet id="15" author="raguzin">
@@ -196,6 +205,7 @@
             </column>
             <column name="name" type="varchar(255)"/>
         </createTable>
+        <sql>ALTER TABLE country CONVERT TO CHARACTER SET utf8</sql>
         <dropColumn tableName="user" columnName="country"/>
         <addColumn tableName="user">
             <column name="country_id" type="varchar(255)">
@@ -209,16 +219,19 @@
             </column>
             <column name="name" type="varchar(255)"/>
         </createTable>
+        <sql>ALTER TABLE state CONVERT TO CHARACTER SET utf8</sql>
         <createTable tableName="province">
             <column name="id" type="varchar(255)">
                 <constraints primaryKey="true"/>
             </column>
             <column name="name" type="varchar(255)"/>
         </createTable>
+        <sql>ALTER TABLE province CONVERT TO CHARACTER SET utf8</sql>
         <sqlFile path="db/sql/country.sql"/>
         <sqlFile path="db/sql/state.sql"/>
         <sqlFile path="db/sql/province.sql"/>
     </changeSet>
+
     <changeSet id="16" author="raguzin">
         <addColumn tableName="state">
             <column name="country_id" type="varchar(255)">
@@ -238,8 +251,9 @@
         <dropColumn tableName="user" columnName="state"/>
         <addColumn tableName="user">
             <column name="state_id" type="varchar(255)">
-                <constraints foreignKeyName="fk_user_to_state"/>
+                <constraints foreignKeyName="fk_user_to_state" referencedTableName="state" referencedColumnNames="id"/>
             </column>
         </addColumn>
     </changeSet>
+
 </databaseChangeLog>
