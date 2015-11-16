@@ -256,4 +256,11 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="18" author="raguzin">
+        <update tableName="state">
+            <column name="id" value="GEORGIA_STATE"/>
+            <where>id='GEORGIA'</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>
