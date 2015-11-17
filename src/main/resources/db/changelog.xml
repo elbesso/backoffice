@@ -263,4 +263,10 @@
         </update>
     </changeSet>
 
+    <changeSet id="19" author="raguzin">
+        <delete tableName="country">
+            <where>id='YUGOSLAVIA'</where>
+        </delete>
+    </changeSet>
+
 </databaseChangeLog>
