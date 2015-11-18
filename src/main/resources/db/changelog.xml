@@ -269,4 +269,22 @@
         </delete>
     </changeSet>
 
+    <changeSet id="20" author="raguzin">
+        <delete tableName="invite"/>
+        <delete tableName="user"/>
+        <dropForeignKeyConstraint baseTableName="state" constraintName="fk_state_to_country"/>
+        <delete tableName="country"/>
+        <sqlFile path="db/sql/country_new.sql"/>
+        <sql>
+            <![CDATA[
+                UPDATE state SET country_id = 'US' WHERE country_id = 'UNITED_STATES';
+                UPDATE state SET country_ID = 'CA' WHERE country_id = 'CANADA';
+            ]]>
+        </sql>
+        <addForeignKeyConstraint baseTableName="state" baseColumnNames="country_id" constraintName="fk_state_to_country"
+                                 referencedTableName="country"
+                                 referencedColumnNames="id"/>
+
+    </changeSet>
+
 </databaseChangeLog>
