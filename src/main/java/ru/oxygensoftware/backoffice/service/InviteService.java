@@ -37,6 +37,7 @@ public class InviteService {
     public void generateInvites(Long amount, Product product, Date expire, String comment) {
         final Set<Invite> initialSet = new HashSet<>(getAll());
         final Set<Invite> result = new HashSet<>(initialSet);
+        expire = getEndOfDay(expire);
         boolean contains = false;
         for (long i = 0; i < amount; i++) {
             while (!contains) {
@@ -70,5 +71,18 @@ public class InviteService {
 
     public Invite get(Integer id) {
         return em.find(Invite.class, id);
+    }
+
+    private Date getEndOfDay(Date day) {
+        if (day == null) {
+            day = new Date();
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(day);
+        calendar.set(Calendar.HOUR_OF_DAY, calendar.getMaximum(Calendar.HOUR_OF_DAY));
+        calendar.set(Calendar.MINUTE, calendar.getMaximum(Calendar.MINUTE));
+        calendar.set(Calendar.SECOND, calendar.getMaximum(Calendar.SECOND));
+        calendar.set(Calendar.MILLISECOND, calendar.getMaximum(Calendar.MILLISECOND));
+        return calendar.getTime();
     }
 }

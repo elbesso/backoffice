@@ -14,6 +14,7 @@ import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.oxygensoftware.backoffice.data.Product;
 import ru.oxygensoftware.backoffice.service.ProductService;
+import ru.oxygensoftware.backoffice.util.MyFieldGroupFieldFactory;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -109,6 +110,7 @@ public class ProductView extends VerticalLayout implements View {
 
         private void build(Product product) {
             BeanFieldGroup<Product> fieldGroup = new BeanFieldGroup<>(Product.class);
+            fieldGroup.setFieldFactory(new MyFieldGroupFieldFactory());
             if (product == null) {
                 fieldGroup.setItemDataSource(service.create());
             } else {

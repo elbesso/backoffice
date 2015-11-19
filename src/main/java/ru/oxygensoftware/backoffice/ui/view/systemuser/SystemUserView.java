@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.oxygensoftware.backoffice.data.SystemUser;
 import ru.oxygensoftware.backoffice.service.SystemUserService;
+import ru.oxygensoftware.backoffice.util.Constant;
+import ru.oxygensoftware.backoffice.util.MyFieldGroupFieldFactory;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -116,6 +118,7 @@ public class SystemUserView extends VerticalLayout implements View {
         private void build(SystemUser systemUser) {
             final boolean isCreate = systemUser == null;
             BeanFieldGroup<SystemUser> fieldGroup = new BeanFieldGroup<>(SystemUser.class);
+            fieldGroup.setFieldFactory(new MyFieldGroupFieldFactory());
             if (systemUser == null) {
                 fieldGroup.setItemDataSource(service.create());
             } else {
@@ -126,6 +129,7 @@ public class SystemUserView extends VerticalLayout implements View {
             confirmPassword.setNullRepresentation("");
             confirmPassword.setVisible(false);
             confirmPassword.setImmediate(true);
+            confirmPassword.setWidth(Constant.STANDARD_FIELD_WIDTH);
             confirmPassword.addValidator(value -> {
                 if (!newPassword.getValue().equals("") && !value.equals(newPassword.getValue())) {
                     throw new Validator.InvalidValueException("Passwords don't match");
@@ -136,6 +140,7 @@ public class SystemUserView extends VerticalLayout implements View {
             oldPassword.setNullRepresentation("");
             oldPassword.setVisible(false);
             oldPassword.setImmediate(true);
+            oldPassword.setWidth(Constant.STANDARD_FIELD_WIDTH);
             oldPassword.addValidator(value -> {
                 if (!newPassword.getValue().equals("") && !isCreate) {
                     if (!encoder.matches(oldPassword.getValue(), systemUser.getPassword())) {
@@ -152,6 +157,7 @@ public class SystemUserView extends VerticalLayout implements View {
 
             newPassword = new PasswordField("New Password");
             newPassword.setNullRepresentation("");
+            newPassword.setWidth(Constant.STANDARD_FIELD_WIDTH);
             newPassword.addValidator(value -> {
                 String v = (String) value;
                 if (v != null && !v.equals("")) {

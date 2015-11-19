@@ -13,12 +13,13 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.vaadin.hene.expandingtextarea.ExpandingTextArea;
 import ru.oxygensoftware.backoffice.data.Country;
 import ru.oxygensoftware.backoffice.data.State;
 import ru.oxygensoftware.backoffice.data.User;
 import ru.oxygensoftware.backoffice.service.CountryService;
 import ru.oxygensoftware.backoffice.service.UserService;
+import ru.oxygensoftware.backoffice.util.Constant;
+import ru.oxygensoftware.backoffice.util.MyFieldGroupFieldFactory;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -122,16 +123,19 @@ public class UserView extends VerticalLayout implements View {
 
         private void build(User user) {
             Country usa = new Country();
-            usa.setId("UNITED_STATES");
+            usa.setId("US");
             Country canada = new Country();
-            canada.setId("CANADA");
+            canada.setId("CA");
             fieldGroup = new BeanFieldGroup<>(User.class);
+            fieldGroup.setFieldFactory(new MyFieldGroupFieldFactory());
+
             if (user == null) {
                 fieldGroup.setItemDataSource(service.create());
             } else {
                 fieldGroup.setItemDataSource(user);
             }
             BeanItemContainer stateContainer = new BeanItemContainer<>(State.class, countryService.getAllStates());
+            stateContainer.sort(new Object[]{"name"}, new boolean[]{true});
             ComboBox state = new ComboBox("State/Province");
             state.setItemCaptionMode(AbstractSelect.ItemCaptionMode.PROPERTY);
             state.setItemCaptionPropertyId("name");
@@ -140,16 +144,20 @@ public class UserView extends VerticalLayout implements View {
             state.setImmediate(true);
             state.setRequiredError("Select a state/province");
             state.setVisible(false);
+            state.setWidth(Constant.STANDARD_FIELD_WIDTH);
             fieldGroup.bind(state, "state");
 
+            BeanItemContainer<Country> countryContainer = new BeanItemContainer<>(Country.class, countryService.getAllCountries());
+            countryContainer.sort(new Object[]{"name"}, new boolean[]{true});
             ComboBox country = new ComboBox("Country");
             country.setItemCaptionMode(AbstractSelect.ItemCaptionMode.PROPERTY);
             country.setItemCaptionPropertyId("name");
-            country.setContainerDataSource(new BeanItemContainer<>(Country.class, countryService.getAllCountries()));
+            country.setContainerDataSource(countryContainer);
             country.setNullSelectionAllowed(false);
             country.setRequired(true);
             country.setImmediate(true);
             country.setRequiredError("Select a country");
+            country.setWidth(Constant.STANDARD_FIELD_WIDTH);
 
             country.addValueChangeListener(event -> {
                 boolean visible = (event.getProperty().getValue().equals(usa) || event.getProperty().getValue().equals(canada));
@@ -182,7 +190,7 @@ public class UserView extends VerticalLayout implements View {
 
             TextField city = createUserTextField("City", "city", true);
             TextField postcode = createUserTextField("Postcode", "postcode", true);
-            ExpandingTextArea address = fieldGroup.buildAndBind("Address", "address", ExpandingTextArea.class);
+            TextArea address = fieldGroup.buildAndBind("Address", "address", TextArea.class);
             address.setRequiredError("Address should not be null");
             address.setRequired(true);
             address.addValidator(new StringLengthValidator("Filed length must be less than or equal to 1024", 0, 1024, true));
@@ -206,7 +214,7 @@ public class UserView extends VerticalLayout implements View {
 
             FormLayout layout = new FormLayout();
             layout.setSizeUndefined();
-            layout.addComponents(name, surname, organization, position, email, country, state, city, postcode, phoneNumber, address, save);
+            layout.addComponents(name, surname, organization, position, email, phoneNumber, address, city, postcode, country, state, save);
             layout.setComponentAlignment(save, Alignment.MIDDLE_CENTER);
             layout.setMargin(true);
             layout.setSpacing(true);

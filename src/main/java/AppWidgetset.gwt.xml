@@ -27,7 +27,5 @@
 
     <inherits name="org.tepi.filtertable.gwt.FilterTableWidgetset"/>
 
-    <inherits name="org.vaadin.hene.expandingtextarea.widgetset.ExpandingtextareaWidgetset"/>
-
     <inherits name="com.vaadin.DefaultWidgetSet"/>
 </module>

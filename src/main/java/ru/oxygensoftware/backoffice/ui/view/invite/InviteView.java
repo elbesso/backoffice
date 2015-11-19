@@ -1,27 +1,37 @@
 package ru.oxygensoftware.backoffice.ui.view.invite;
 
+import com.vaadin.data.Item;
 import com.vaadin.data.Validatable;
 import com.vaadin.data.Validator;
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.data.util.converter.Converter;
 import com.vaadin.data.validator.LongRangeValidator;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.tepi.filtertable.FilterTable;
-import org.vaadin.hene.expandingtextarea.ExpandingTextArea;
 import ru.oxygensoftware.backoffice.data.Invite;
 import ru.oxygensoftware.backoffice.data.Product;
 import ru.oxygensoftware.backoffice.service.InviteService;
 import ru.oxygensoftware.backoffice.service.ProductService;
+import ru.oxygensoftware.backoffice.util.ConfirmDialog;
+import ru.oxygensoftware.backoffice.util.Constant;
+import ru.oxygensoftware.backoffice.util.MyFieldGroupFieldFactory;
 
 import javax.annotation.PostConstruct;
+import java.io.PrintWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @SpringView(name = InviteView.NAME)
 @SuppressWarnings("unchecked")
@@ -38,6 +48,8 @@ public class InviteView extends VerticalLayout implements View {
         container.addAll(service.getAll());
         container.addNestedContainerProperty("product.name");
         container.addNestedContainerProperty("user.name");
+        container.addNestedContainerProperty("product.productCode");
+        container.addNestedContainerProperty("user.email");
         FilterTable table = new FilterTable();
         table.setContainerDataSource(container);
         table.setVisibleColumns("id", "invite", "product.name", "dateCreated", "dateExpire", "dateActivated", "user.name",
@@ -57,6 +69,40 @@ public class InviteView extends VerticalLayout implements View {
                 }
             }
         });
+        table.setConverter("dateExpire", new Converter<String, Date>() {
+            private final String pattern = "MMM dd, yyyy";
+            @Override
+            public Date convertToModel(String value, Class<? extends Date> targetType, Locale locale) throws ConversionException {
+                if (locale == null) {
+                    locale = Locale.getDefault();
+                }
+                SimpleDateFormat formatter = new SimpleDateFormat(pattern, locale);
+                try {
+                    return formatter.parse(value);
+                } catch (ParseException e) {
+                    return null;
+                }
+            }
+
+            @Override
+            public String convertToPresentation(Date value, Class<? extends String> targetType, Locale locale) throws ConversionException {
+                if (locale == null) {
+                    locale = Locale.getDefault();
+                }
+                SimpleDateFormat formatter = new SimpleDateFormat(pattern, locale);
+                return formatter.format(value);
+            }
+
+            @Override
+            public Class<Date> getModelType() {
+                return Date.class;
+            }
+
+            @Override
+            public Class<String> getPresentationType() {
+                return String.class;
+            }
+        });
 
         Button generate = new Button("Generate", event -> {
             openWindow(new GenerateInvitesWindow());
@@ -65,9 +111,14 @@ public class InviteView extends VerticalLayout implements View {
         Button delete = new Button("Delete", event -> {
             Object value = table.getValue();
             if (value != null) {
-                ((Collection<Invite>) value).stream().forEach(item -> service.delete(item.getId()));
-                refresh();
-                table.setValue(null);
+                Collection<Invite> col = (Collection<Invite>) value;
+                String entr = col.size() == 1 ? " entry?" : " entries?";
+                ConfirmDialog dialog = new ConfirmDialog("Do you really want to delete " + col.size() + entr, confirmEvent -> {
+                    col.stream().forEach(item -> service.delete(item.getId()));
+                    refresh();
+                    table.setValue(null);
+                });
+                getUI().addWindow(dialog);
             }
         });
 
@@ -77,11 +128,39 @@ public class InviteView extends VerticalLayout implements View {
                 if (invites.size() == 1) {
                     List<Invite> list = new ArrayList<>(invites);
                     openWindow(new EditInviteWindow(list.get(0)));
+                } else if (invites.size() > 1) {
+                    openWindow(new EditInviteWindow(new MultipleInviteDto(invites)));
                 }
             }
         });
 
-        HorizontalLayout buttonLayout = new HorizontalLayout(generate, edit, delete);
+        Button export = new Button("Export to CSV", event -> {
+            try {
+                PrintWriter writer = new PrintWriter("export.csv", "UTF-8");
+                final String DELIM = "; ";
+                table.getItemIds().forEach(id -> {
+                    Item item = table.getItem(id);
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("\"").append(item.getItemProperty("id").getValue()).append("\"").append(DELIM);
+                    sb.append("\"").append(item.getItemProperty("invite").getValue()).append("\"").append(DELIM);
+                    sb.append("\"").append(item.getItemProperty("dateCreated").getValue()).append("\"").append(DELIM);
+                    sb.append("\"").append(item.getItemProperty("dateExpire").getValue()).append("\"").append(DELIM);
+                    sb.append("\"").append(item.getItemProperty("dateActivated").getValue()).append("\"").append(DELIM);
+                    sb.append("\"").append(item.getItemProperty("user.email").getValue()).append("\"").append(DELIM);
+                    sb.append("\"").append(item.getItemProperty("product.productCode").getValue()).append("\"").append(DELIM);
+                    sb.append("\"").append(item.getItemProperty("comment").getValue()).append("\"");
+                    Pattern pattern = Pattern.compile("\"null\"");
+                    Matcher matcher = pattern.matcher(sb);
+                    writer.println(matcher.replaceAll("\"\""));
+                });
+                writer.close();
+                Notification.show("Success!");
+            } catch (Exception e) {
+                Notification.show("Fail!");
+            }
+        });
+
+        HorizontalLayout buttonLayout = new HorizontalLayout(generate, edit, delete, export);
         buttonLayout.setSizeUndefined();
         buttonLayout.setSpacing(true);
 
@@ -122,9 +201,11 @@ public class InviteView extends VerticalLayout implements View {
         public GenerateInvitesWindow() {
             BeanFieldGroup<InviteDto> fieldGroup = new BeanFieldGroup<>(InviteDto.class);
             fieldGroup.setItemDataSource(new InviteDto());
+            fieldGroup.setFieldFactory(new MyFieldGroupFieldFactory());
 
             ComboBox product = createProduct();
             fieldGroup.bind(product, "product");
+            product.setWidth(Constant.STANDARD_FIELD_WIDTH);
 
             DateField dateExpire = fieldGroup.buildAndBind("Expiration Date", "dateExpire", DateField.class);
             dateExpire.setRequired(true);
@@ -176,17 +257,77 @@ public class InviteView extends VerticalLayout implements View {
     }
 
     private class EditInviteWindow extends Window {
+        public EditInviteWindow(MultipleInviteDto source) {
+            BeanFieldGroup<MultipleInviteDto> fieldGroup = new BeanFieldGroup<>(MultipleInviteDto.class);
+            fieldGroup.setItemDataSource(source);
+
+            ComboBox product = createProduct();
+            fieldGroup.bind(product, "product");
+            product.setWidth(Constant.STANDARD_FIELD_WIDTH);
+            product.setNullSelectionAllowed(true);
+            product.setRequired(false);
+            product.setRequiredError(null);
+
+            DateField dateExpire = fieldGroup.buildAndBind("Expiration Date", "dateExpire", DateField.class);
+            dateExpire.setRequiredError("You should select expiration date");
+            dateExpire.addValidator(value -> {
+                if (value != null) {
+                    Date date = (Date) value;
+                    if (date.before(new Date())) {
+                        throw new Validator.InvalidValueException("Expiration date should be after current date");
+                    }
+                }
+            });
+
+            TextField comment = fieldGroup.buildAndBind("Comment", "comment", TextField.class);
+            comment.setNullRepresentation("");
+
+            Button save = new Button("Save", event -> {
+                try {
+                    fieldGroup.commit();
+                    MultipleInviteDto dto = fieldGroup.getItemDataSource().getBean();
+                    dto.getInvites().forEach(invite -> {
+                        if (dto.getComment() != null) {
+                            invite.setComment(dto.getComment());
+                        }
+                        if (dto.getDateExpire() != null) {
+                            invite.setDateExpire(dto.getDateExpire());
+                        }
+                        if (dto.getProduct() != null) {
+                            invite.setProduct(dto.getProduct());
+                        }
+                        service.save(invite);
+                    });
+                    refresh();
+                    this.close();
+                } catch (FieldGroup.CommitException e) {
+                    Notification.show(e.getMessage());
+                }
+            });
+
+            FormLayout layout = new FormLayout(product, dateExpire, comment, save);
+            layout.setSizeUndefined();
+            layout.setMargin(true);
+            layout.setSpacing(true);
+
+            setCaption("Edit Invites");
+            setContent(layout);
+            center();
+            setModal(true);
+            setResizable(false);
+        }
+
         public EditInviteWindow(Invite source) {
             BeanFieldGroup<Invite> fieldGroup = new BeanFieldGroup<>(Invite.class);
             fieldGroup.setItemDataSource(source);
+            fieldGroup.setFieldFactory(new MyFieldGroupFieldFactory());
 
             TextField invite = fieldGroup.buildAndBind("Invite", "invite", TextField.class);
-            invite.setWidth("200px");
             invite.setEnabled(false);
 
-            TextField product = fieldGroup.buildAndBind("Product", "product.name", TextField.class);
-            product.setSizeFull();
-            product.setEnabled(false);
+            ComboBox product = createProduct();
+            product.setWidth(Constant.STANDARD_FIELD_WIDTH);
+            fieldGroup.bind(product, "product");
 
             DateField dateCreated = fieldGroup.buildAndBind("Creation Date", "dateCreated", DateField.class);
             dateCreated.setEnabled(false);
@@ -194,7 +335,7 @@ public class InviteView extends VerticalLayout implements View {
             DateField dateExpire = fieldGroup.buildAndBind("Expiration date", "dateExpire", DateField.class);
             dateExpire.setRequired(true);
             dateExpire.setImmediate(true);
-            dateExpire.setRequiredError("You should select expiration date");
+            dateExpire.setResolution(Resolution.DAY);
             dateExpire.addValidator(value -> {
                 if (value != null) {
                     Date date = (Date) value;
@@ -213,8 +354,9 @@ public class InviteView extends VerticalLayout implements View {
             }
             user.setEnabled(false);
             user.setNullRepresentation("");
+            user.setWidth(Constant.STANDARD_FIELD_WIDTH);
 
-            ExpandingTextArea comment = fieldGroup.buildAndBind("Comment", "comment", ExpandingTextArea.class);
+            TextArea comment = fieldGroup.buildAndBind("Comment", "comment", TextArea.class);
             comment.setNullRepresentation("");
             comment.addValidator(new StringLengthValidator("Filed length must be less than or equal to 1024", 0, 1024, true));
 
