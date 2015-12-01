@@ -346,11 +346,4 @@
                                  referencedColumnNames="id"/>
     </changeSet>
 
-    <changeSet id="21" author="raguzin">
-        <delete tableName="captcha_lockout"/>
-        <delete tableName="invite_lockout"/>
-        <modifyDataType tableName="captcha_lockout" columnName="first_failed_time" newDataType="timestamp"/>
-        <modifyDataType tableName="invite_lockout" columnName="first_failed_time" newDataType="timestamp"/>
-    </changeSet>
-
 </databaseChangeLog>
