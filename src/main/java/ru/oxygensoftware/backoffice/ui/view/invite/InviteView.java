@@ -1,5 +1,6 @@
 package ru.oxygensoftware.backoffice.ui.view.invite;
 
+import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.Validatable;
 import com.vaadin.data.Validator;
@@ -8,15 +9,21 @@ import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.converter.Converter;
+import com.vaadin.data.util.filter.Between;
+import com.vaadin.data.util.filter.Compare;
 import com.vaadin.data.validator.LongRangeValidator;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.FileDownloader;
+import com.vaadin.server.StreamResource;
 import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.tepi.filtertable.FilterGenerator;
 import org.tepi.filtertable.FilterTable;
+import org.tepi.filtertable.datefilter.DateInterval;
 import ru.oxygensoftware.backoffice.data.Invite;
 import ru.oxygensoftware.backoffice.data.Product;
 import ru.oxygensoftware.backoffice.service.InviteService;
@@ -26,7 +33,10 @@ import ru.oxygensoftware.backoffice.util.Constant;
 import ru.oxygensoftware.backoffice.util.MyFieldGroupFieldFactory;
 
 import javax.annotation.PostConstruct;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -52,10 +62,10 @@ public class InviteView extends VerticalLayout implements View {
         container.addNestedContainerProperty("user.email");
         FilterTable table = new FilterTable();
         table.setContainerDataSource(container);
-        table.setVisibleColumns("id", "invite", "product.name", "dateCreated", "dateExpire", "dateActivated", "user.name",
+        table.setVisibleColumns("id", "invite", "product.name", "dateCreated", "dateExpire", "dateActivated", "user.email",
                 "comment");
         table.setColumnHeaders("ID", "Invite", "Product Name", "Creation Date", "Expiration Date", "Activation Date",
-                "User", "Comment");
+                "User Email", "Comment");
         table.setSizeFull();
         table.setWidth("100%");
         table.setSelectable(true);
@@ -71,6 +81,7 @@ public class InviteView extends VerticalLayout implements View {
         });
         table.setConverter("dateExpire", new Converter<String, Date>() {
             private final String pattern = "MMM dd, yyyy";
+
             @Override
             public Date convertToModel(String value, Class<? extends Date> targetType, Locale locale) throws ConversionException {
                 if (locale == null) {
@@ -101,6 +112,55 @@ public class InviteView extends VerticalLayout implements View {
             @Override
             public Class<String> getPresentationType() {
                 return String.class;
+            }
+        });
+        table.setFilterGenerator(new FilterGenerator() {
+            @Override
+            public Container.Filter generateFilter(Object propertyId, Object value) {
+                if (value instanceof DateInterval) {
+                    DateInterval interval = (DateInterval) value;
+                    Comparable<?> actualFrom = interval.getFrom(), actualTo = interval
+                            .getTo();
+                    actualFrom = actualFrom == null ? null : new Timestamp(interval
+                            .getFrom().getTime());
+                    actualTo = actualTo == null ? null : new Timestamp(interval
+                            .getTo().getTime());
+
+                    if (actualFrom != null && actualTo != null) {
+                        return new Between(propertyId, actualFrom, actualTo);
+                    } else if (actualFrom != null) {
+                        return new Compare.GreaterOrEqual(propertyId, actualFrom);
+                    } else {
+                        return new Compare.LessOrEqual(propertyId, actualTo);
+                    }
+                }
+
+                return null;
+            }
+
+            @Override
+            public Container.Filter generateFilter(Object o, Field<?> field) {
+                return null;
+            }
+
+            @Override
+            public AbstractField<?> getCustomFilterComponent(Object o) {
+                return null;
+            }
+
+            @Override
+            public void filterRemoved(Object o) {
+
+            }
+
+            @Override
+            public void filterAdded(Object o, Class<? extends Container.Filter> aClass, Object o1) {
+
+            }
+
+            @Override
+            public Container.Filter filterGeneratorFailed(Exception e, Object o, Object o1) {
+                return null;
             }
         });
 
@@ -134,10 +194,12 @@ public class InviteView extends VerticalLayout implements View {
             }
         });
 
-        Button export = new Button("Export to CSV", event -> {
+        Button export = new Button("Export to CSV");
+        FileDownloader fd = new FileDownloader(new StreamResource(() -> {
             try {
-                PrintWriter writer = new PrintWriter("export.csv", "UTF-8");
-                final String DELIM = "; ";
+                final String DELIM = ";";
+                final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                final PrintWriter writer = new PrintWriter(bos);
                 table.getItemIds().forEach(id -> {
                     Item item = table.getItem(id);
                     StringBuilder sb = new StringBuilder();
@@ -153,12 +215,14 @@ public class InviteView extends VerticalLayout implements View {
                     Matcher matcher = pattern.matcher(sb);
                     writer.println(matcher.replaceAll("\"\""));
                 });
-                writer.close();
-                Notification.show("Success!");
+                writer.flush();
+                return new ByteArrayInputStream(bos.toByteArray());
             } catch (Exception e) {
                 Notification.show("Fail!");
             }
-        });
+            return null;
+        }, "export.csv"));
+        fd.extend(export);
 
         HorizontalLayout buttonLayout = new HorizontalLayout(generate, edit, delete, export);
         buttonLayout.setSizeUndefined();

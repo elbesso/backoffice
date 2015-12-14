@@ -1,8 +1,6 @@
 package ru.oxygensoftware.backoffice.util;
 
 import com.vaadin.ui.*;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Window;
 
 /**
  * Created by Dmitry Raguzin
@@ -21,7 +19,6 @@ public class ConfirmDialog extends Window {
 
     private void buildContent(Button.ClickListener listener, String text) {
         HorizontalLayout buttonsHolder = new HorizontalLayout();
-//        buttonsHolder.setMargin(true);
         buttonsHolder.setSpacing(true);
         buttonsHolder.setWidth("100%");
         buttonsHolder.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);

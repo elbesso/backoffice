@@ -295,7 +295,8 @@
     <changeSet id="16" author="raguzin">
         <addColumn tableName="state">
             <column name="country_id" type="varchar(255)">
-                <constraints foreignKeyName="fk_state_to_country" referencedTableName="country" referencedColumnNames="id"/>
+                <constraints foreignKeyName="fk_state_to_country" referencedTableName="country"
+                             referencedColumnNames="id"/>
             </column>
         </addColumn>
         <sql>
