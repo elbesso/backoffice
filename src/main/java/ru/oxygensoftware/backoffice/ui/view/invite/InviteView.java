@@ -9,8 +9,7 @@ import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.converter.Converter;
-import com.vaadin.data.util.filter.Between;
-import com.vaadin.data.util.filter.Compare;
+import com.vaadin.data.util.filter.*;
 import com.vaadin.data.validator.LongRangeValidator;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.navigator.View;
@@ -125,13 +124,12 @@ public class InviteView extends VerticalLayout implements View {
                             .getFrom().getTime());
                     actualTo = actualTo == null ? null : new Timestamp(interval
                             .getTo().getTime());
-
                     if (actualFrom != null && actualTo != null) {
                         return new Between(propertyId, actualFrom, actualTo);
                     } else if (actualFrom != null) {
-                        return new Compare.GreaterOrEqual(propertyId, actualFrom);
+                        return new And(new Compare.GreaterOrEqual(propertyId, actualFrom), new Not(new IsNull(propertyId)));
                     } else {
-                        return new Compare.LessOrEqual(propertyId, actualTo);
+                        return new And(new Compare.LessOrEqual(propertyId, actualTo), new Not(new IsNull(propertyId)));
                     }
                 }
 
